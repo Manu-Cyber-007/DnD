@@ -28,7 +28,7 @@ public abstract class PersonajeBase {
     // Mostrar ficha de personaje
     public void mostrarFicha() {
         System.out.println("\n==============================");
-        System.out.println("🧙 HOJA DE PERSONAJE D&D");
+        System.out.println(" HOJA DE PERSONAJE D&D");
         System.out.println("==============================");
         System.out.println("Nombre: " + nombre);
         System.out.println("Edad: " + edad + " años");
@@ -64,4 +64,5 @@ public abstract class PersonajeBase {
         this.historia = historia;
     }
 }
+
 
