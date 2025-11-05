@@ -4,22 +4,23 @@ package dnd;
 public abstract class PersonajeBase {
     protected String nombre;
     protected int edad;
-    protected String raza;
-    protected String clase;
-    protected String antecedente;
+    protected Raza raza;
+    protected Clase clase;
+    protected Antecedente antecedente;
     protected int nivel = 1;
+
 
     // Atributos comunes a todos los personajes
     protected int fuerza, destreza, constitucion, inteligencia, sabiduria, carisma;
     protected String historia;
 
     // Constructor
-    public PersonajeBase(String nombre, int edad, String raza, String clase, String antecedente) {
+    public PersonajeBase(String nombre, int edad, Raza raza2, Clase clase, Antecedente antecedente2) {
         this.nombre = nombre;
         this.edad = edad;
-        this.raza = raza;
+        this.raza = raza2;
         this.clase = clase;
-        this.antecedente = antecedente;
+        this.antecedente = antecedente2;
     }
 
     // Método abstracto → cada clase lo implementa a su manera
@@ -28,14 +29,14 @@ public abstract class PersonajeBase {
     // Mostrar ficha de personaje
     public void mostrarFicha() {
         System.out.println("\n==============================");
-        System.out.println("HOJA DE PERSONAJE D&D");
+        System.out.println(" HOJA DE PERSONAJE D&D");
         System.out.println("==============================");
         System.out.println("Nombre: " + nombre);
         System.out.println("Edad: " + edad + " años");
         System.out.println("Nivel: " + nivel);
-        System.out.println("Raza: " + raza);
-        System.out.println("Clase: " + clase);
-        System.out.println("Antecedente: " + antecedente);
+        System.out.println("Raza: " + formatearEnum(raza));
+        System.out.println("Clase: " + formatearEnum(clase));
+        System.out.println("Antecedente: " + formatearEnum(antecedente));
 
         System.out.println("\n--- ATRIBUTOS ---");
         System.out.printf("Fuerza: %d (%+d)\n", fuerza, getModificador(fuerza));
@@ -63,7 +64,11 @@ public abstract class PersonajeBase {
     public void setHistoria(String historia) {
         this.historia = historia;
     }
+
+     // Formatear enums para mostrar con mayúscula inicial
+    protected String formatearEnum(Enum<?> valor) {
+        String texto = valor.name().toLowerCase();
+        return texto.substring(0, 1).toUpperCase() + texto.substring(1);
+    }
 }
-
-
 

@@ -3,7 +3,7 @@ package dnd;
 // Clase concreta que hereda de PersonajeBase (herencia)
 public class Personaje extends PersonajeBase {
 
-    public Personaje(String nombre, int edad, String raza, String clase, String antecedente) {
+    public Personaje(String nombre, int edad, Raza raza, Clase clase, Antecedente antecedente) {
         super(nombre, edad, raza, clase, antecedente);
     }
 
@@ -12,7 +12,7 @@ public class Personaje extends PersonajeBase {
     public void presentarHistoria() {
         System.out.println("\n--- HISTORIA DEL PERSONAJE ---");
         System.out.println(historia);
-        System.out.println("\n¡Bienvenido, " + nombre + " el " + clase + " " + raza + "!");
-        System.out.println("Tu aventura comienza ahora... ");
+        System.out.println(" ¡Bienvenido, " + nombre + " el " + formatearEnum(clase) + " " + formatearEnum(raza) + "!");
+        System.out.println(" Tu aventura comienza ahora... ");
     }
 }

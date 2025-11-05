@@ -1,9 +1,13 @@
 package dnd;
+
 import java.util.Scanner;
+import java.util.Random;
+import java.util.Arrays;
 
 public class CharacterSheet {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
+        Random rand = new Random();
 
         System.out.println("===  CREADOR DE PERSONAJES DE D&D  ===");
 
@@ -11,12 +15,18 @@ public class CharacterSheet {
         System.out.print("Nombre del personaje: ");
         String nombre = sc.nextLine();
 
-        System.out.print("Edad: ");
-        int edad = sc.nextInt();
+        int edad;
+        do {
+            System.out.print("Edad: ");
+            edad = sc.nextInt();
+            if (edad <= 0) {
+                System.out.println("Valor inválido. La edad debe ser un número positivo mayor que cero.");
+            }
+        } while (edad <= 0);
         sc.nextLine();
 
         // --- RAZAS ---
-        String[] razas = {"Enano", "Elfo", "Halfling", "Humano", "Dragonborn", "Gnomo", "Goliat", "Orco", "Tiefling"};
+        Raza[] razas = Raza.values();
         String[] descRazas = {
             "Los Enanos son fuertes, resistentes y orgullosos de sus tradiciones subterráneas.",
             "Los Elfos son ágiles, longevos y profundamente conectados con la magia y la naturaleza.",
@@ -30,16 +40,15 @@ public class CharacterSheet {
         };
 
         System.out.println("\nElige una raza:");
-        for (int i = 0; i < razas.length; i++) System.out.println((i + 1) + ". " + razas[i]);
+        for (int i = 0; i < razas.length; i++) System.out.println((i + 1) + ". " + formatearEnum(razas[i]));
         System.out.print("Número elegido: ");
-        int razaIndex = sc.nextInt() - 1;
+        Raza raza = razas[sc.nextInt() - 1];
         sc.nextLine();
-        String raza = razas[razaIndex];
-        System.out.println("\n Descripción de la raza " + raza + ":");
-        System.out.println(descRazas[razaIndex]);
+        System.out.println("\nDescripción de la raza " + formatearEnum(raza) + ":");
+        System.out.println(descRazas[raza.ordinal()]);
 
         // --- CLASES ---
-        String[] clases = {"Bárbaro", "Bardo", "Brujo", "Clérigo", "Combatiente", "Druida", "Guardabosques", "Hechicero", "Mago", "Monje", "Paladín", "Pícaro"};
+        Clase[] clases = Clase.values();
         String[] descClases = {
             "Los Bárbaros canalizan su furia interior en poder devastador.",
             "Los Bardos usan la música y la palabra para inspirar y manipular la magia.",
@@ -56,59 +65,53 @@ public class CharacterSheet {
         };
 
         System.out.println("\nElige una clase:");
-        for (int i = 0; i < clases.length; i++) System.out.println((i + 1) + ". " + clases[i]);
+        for (int i = 0; i < clases.length; i++) System.out.println((i + 1) + ". " + formatearEnum(clases[i]));
         System.out.print("Número elegido: ");
-        int claseIndex = sc.nextInt() - 1;
+        Clase clase = clases[sc.nextInt() - 1];
         sc.nextLine();
-        String clase = clases[claseIndex];
-        System.out.println("\n Descripción de la clase " + clase + ":");
-        System.out.println(descClases[claseIndex]);
+        System.out.println("\nDescripción de la clase " + formatearEnum(clase) + ":");
+        System.out.println(descClases[clase.ordinal()]);
 
         // --- ANTECEDENTES ---
-        String[] antecedentes = {"Soldado", "Criminal", "Sabio", "Acolito"};
+        Antecedente[] antecedentes = Antecedente.values();
         System.out.println("\nElige un antecedente:");
-        for (int i = 0; i < antecedentes.length; i++) System.out.println((i + 1) + ". " + antecedentes[i]);
+        for (int i = 0; i < antecedentes.length; i++) System.out.println((i + 1) + ". " + formatearEnum(antecedentes[i]));
         System.out.print("Número elegido: ");
-        String antecedente = antecedentes[sc.nextInt() - 1];
+        Antecedente antecedente = antecedentes[sc.nextInt() - 1];
         sc.nextLine();
 
         // --- Crear personaje ---
-        PersonajeBase pj = switch (clase) {
-            case "Bárbaro" -> new Barbaro(nombre, edad, raza, antecedente);
-            case "Bardo" -> new Bardo(nombre, edad, raza, antecedente);
-            case "Brujo" -> new Brujo(nombre, edad, raza, antecedente);
-            case "Clérigo" -> new Clerigo(nombre, edad, raza, antecedente);
-            case "Combatiente" -> new Combatiente(nombre, edad, raza, antecedente);
-            case "Druida" -> new Druida(nombre, edad, raza, antecedente);
-            case "Guardabosques" -> new Guardabosques(nombre, edad, raza, antecedente);
-            case "Hechicero" -> new Hechicero(nombre, edad, raza, antecedente);
-            case "Mago" -> new Mago(nombre, edad, raza, antecedente);
-            case "Monje" -> new Monje(nombre, edad, raza, antecedente);
-            case "Paladín" -> new Paladin(nombre, edad, raza, antecedente);
-            case "Pícaro" -> new Picaro(nombre, edad, raza, antecedente);
-            default -> new PersonajeGenerico(nombre, edad, raza, clase, antecedente);
-        };
+        PersonajeBase pj = crearPersonaje(nombre, edad, raza, clase, antecedente);
 
         // --- Tiradas de atributos ---
         System.out.println("\n--- Generación de atributos ---");
-        System.out.println("Lanza 4d6, descarta el más bajo y suma los tres restantes. Ingresa tus resultados:");
-        System.out.print("Fuerza: ");
-        int fuerza = sc.nextInt();
-        System.out.print("Destreza: ");
-        int destreza = sc.nextInt();
-        System.out.print("Constitución: ");
-        int constitucion = sc.nextInt();
-        System.out.print("Inteligencia: ");
-        int inteligencia = sc.nextInt();
-        System.out.print("Sabiduría: ");
-        int sabiduria = sc.nextInt();
-        System.out.print("Carisma: ");
-        int carisma = sc.nextInt();
-        sc.nextLine();
+        System.out.print("¿Quieres que el programa tire tus atributos automáticamente? (si/no): ");
+        String auto = sc.nextLine().trim().toLowerCase();
+
+        int fuerza, destreza, constitucion, inteligencia, sabiduria, carisma;
+
+        if (auto.equals("si")) {
+            fuerza = tirar4d6(rand, "Fuerza");
+            destreza = tirar4d6(rand, "Destreza");
+            constitucion = tirar4d6(rand, "Constitución");
+            inteligencia = tirar4d6(rand, "Inteligencia");
+            sabiduria = tirar4d6(rand, "Sabiduría");
+            carisma = tirar4d6(rand, "Carisma");
+        } else {
+            System.out.println("Lanza 4d6, descarta el más bajo y suma los tres restantes.");
+            System.out.println("Ingresa valores entre 3 y 18.");
+
+            fuerza = leerAtributo(sc, "Fuerza");
+            destreza = leerAtributo(sc, "Destreza");
+            constitucion = leerAtributo(sc, "Constitución");
+            inteligencia = leerAtributo(sc, "Inteligencia");
+            sabiduria = leerAtributo(sc, "Sabiduría");
+            carisma = leerAtributo(sc, "Carisma");
+        }
 
         pj.setAtributos(fuerza, destreza, constitucion, inteligencia, sabiduria, carisma);
 
-          // --- Calcular puntos de vida ---
+        // --- Calcular puntos de vida ---
         int dado = getHitDie(clase);
         int modCon = pj.getModificador(constitucion);
         System.out.println("\nTu clase usa un dado de golpe d" + dado + ".");
@@ -123,12 +126,11 @@ public class CharacterSheet {
             baseHP = tirada;
             System.out.printf(" Tirada d%d (%d) + Modificador Constitución (%+d)\n", dado, tirada, modCon);
         } else {
-            baseHP = dado; // máximo valor del dado
-             System.out.printf(" Máximo del dado d%d (%d) + Modificador Constitución (%+d)\n", dado, dado, modCon);
+            baseHP = dado;
+            System.out.printf(" Máximo del dado d%d (%d) + Modificador Constitución (%+d)\n", dado, dado, modCon);
         }
 
-        int hpInicial = baseHP + pj.getModificador(constitucion);
-        if (hpInicial < 1) hpInicial = 1; // mínimo 1 HP
+        int hpInicial = Math.max(1, baseHP + modCon);
 
         // --- Historia personalizada ---
         System.out.println("\nAhora escribe una breve historia de tu personaje:");
@@ -137,34 +139,72 @@ public class CharacterSheet {
         // --- Mostrar ficha final ---
         pj.mostrarFicha();
 
-       // --- Tabla de modificadores ---
+        // --- Resumen de atributos ---
         System.out.println("\n======  RESUMEN DE ATRIBUTOS ======");
-        System.out.printf("Fuerza ............. %2d (%+d)\n", fuerza, pj.getModificador(fuerza));
-        System.out.printf("Destreza ........... %2d (%+d)\n", destreza, pj.getModificador(destreza));
-        System.out.printf("Constitución ....... %2d (%+d)\n", constitucion, pj.getModificador(constitucion));
-        System.out.printf("Inteligencia ....... %2d (%+d)\n", inteligencia, pj.getModificador(inteligencia));
-        System.out.printf("Sabiduría .......... %2d (%+d)\n", sabiduria, pj.getModificador(sabiduria));
-        System.out.printf("Carisma ............ %2d (%+d)\n", carisma, pj.getModificador(carisma));
+        mostrarAtributo("Fuerza", fuerza, pj);
+        mostrarAtributo("Destreza", destreza, pj);
+        mostrarAtributo("Constitución", constitucion, pj);
+        mostrarAtributo("Inteligencia", inteligencia, pj);
+        mostrarAtributo("Sabiduría", sabiduria, pj);
+        mostrarAtributo("Carisma", carisma, pj);
         System.out.println("-------------------------------------");
         System.out.printf(" Dado de golpe: d%d\n", dado);
         System.out.printf(" Puntos de Vida (HP inicial): %d\n", hpInicial);
         System.out.println("=====================================");
-        // --- Presentar historia personalizada ---
+
+        // --- Historia personalizada ---
         pj.presentarHistoria();
-
         sc.close();
-
-        
     }
-     // === MÉTODO AUXILIAR PARA CALCULAR HP INICIAL ===
-     private static int getHitDie(String clase) {
+
+    // === MÉTODOS AUXILIARES ===
+
+    private static int getHitDie(Clase clase) {
         return switch (clase) {
-            case "Bárbaro" -> 12;
-            case "Paladín", "Guardabosques", "Combatiente" -> 10;
-            case "Clérigo", "Druida", "Monje", "Pícaro", "Bardo" -> 8;
-            case "Hechicero", "Mago", "Brujo" -> 6;
-            default -> 8; // valor por defecto
+            case BARBARO -> 12;
+            case PALADIN, GUARDABOSQUES, COMBATIENTE -> 10;
+            case CLERIGO, DRUIDA, MONJE, PICARO, BARDO -> 8;
+            case HECHICERO, MAGO, BRUJO -> 6;
+            default -> 8;
+        };
+    }
+
+    private static int tirar4d6(Random rand, String atributo) {
+        int[] dados = new int[4];
+        for (int i = 0; i < 4; i++) dados[i] = rand.nextInt(6) + 1;
+        Arrays.sort(dados);
+        int total = dados[1] + dados[2] + dados[3];
+        System.out.printf("%s: [%d, %d, %d, %d] => %d\n", atributo, dados[0], dados[1], dados[2], dados[3], total);
+        return total;
+    }
+
+    private static int leerAtributo(Scanner sc, String nombre) {
+        int valor;
+        do {
+            System.out.print(nombre + ": ");
+            valor = sc.nextInt();
+            if (valor < 3 || valor > 18) {
+                System.out.println("Valor inválido. Debe estar entre 3 y 18.");
+            }
+        } while (valor < 3 || valor > 18);
+        return valor;
+    }
+
+    private static void mostrarAtributo(String nombre, int valor, PersonajeBase pj) {
+        System.out.printf("%s ............. %2d (%+d)\n", nombre, valor, pj.getModificador(valor));
+    }
+
+    private static String formatearEnum(Enum<?> valor) {
+        String texto = valor.name().toLowerCase();
+        return texto.substring(0, 1).toUpperCase() + texto.substring(1);
+    }
+
+    private static PersonajeBase crearPersonaje(String nombre, int edad, Raza raza, Clase clase, Antecedente antecedente) {
+        return switch (clase) {
+            case BARBARO -> new Barbaro(nombre, edad, raza, antecedente);
+            case MAGO -> new Mago(nombre, edad, raza, antecedente);
+            case DRUIDA -> new Druida(nombre, edad, raza, antecedente);
+            default -> new PersonajeGenerico(nombre, edad, raza, clase, antecedente);
         };
     }
 }
-

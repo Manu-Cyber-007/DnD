@@ -1,19 +1,19 @@
 package dnd;
 
 public class Brujo extends PersonajeBase {
-    public Brujo(String nombre, int edad, String raza, String antecedente) {
-        super(nombre, edad, raza, "Brujo", antecedente);
+    public Brujo(String nombre, int edad, Raza raza, Antecedente antecedente) {
+        super(nombre, edad, raza, Clase.BRUJO, antecedente);
     }
 
     @Override
     public void presentarHistoria() {
         System.out.println("\n--- HISTORIA DEL BRUJO ---");
-        System.out.println(nombre + " obtuvo su poder mediante un pacto con una entidad sobrenatural.");
-        System.out.println("Como " + raza + ", su conexión con lo arcano lo hace misterioso y temido.");
-        System.out.println("Su pasado como " + antecedente.toLowerCase() + " lo llevó a buscar poder más allá de lo mortal.");
+        System.out.println(nombre + " obtuvo su poder a través de un pacto con una entidad sobrenatural.");
+        System.out.println("Como " + formatearEnum(raza) + ", su conexión con lo arcano es profunda.");
+        System.out.println("Su pasado como " + formatearEnum(antecedente).toLowerCase() + " moldeó su ambición y destino.");
         System.out.println("Historia del jugador: " + historia);
-        System.out.println(" ¡" + nombre + " el Brujo invoca el poder de su patrón oscuro! ");
-        System.out.println("\n¡Bienvenido, " + nombre + " el " + clase + " " + raza + "!");
-        System.out.println("Tu aventura comienza ahora... ");
+        System.out.println("¡" + nombre + " el " + formatearEnum(clase) + " desata su energía oculta!");
+        System.out.println("¡Bienvenido, " + nombre + " el " + formatearEnum(clase) + " " + formatearEnum(raza) + "!");
+        System.out.println("Tu aventura comienza ahora...");
     }
 }
