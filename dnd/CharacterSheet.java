@@ -15,14 +15,19 @@ public class CharacterSheet {
         System.out.print("Nombre del personaje: ");
         String nombre = sc.nextLine();
 
-        int edad;
-        do {
+        int edad = 0;
+        while (edad <= 0) {
             System.out.print("Edad: ");
-            edad = sc.nextInt();
-            if (edad <= 0) {
-                System.out.println("Valor inválido. La edad debe ser un número positivo mayor que cero.");
+            if (sc.hasNextInt()) {
+                edad = sc.nextInt();
+                if (edad <= 0) {
+                    System.out.println("Valor inválido. La edad debe ser un número positivo mayor que cero.");
+                }
+            } else {
+                System.out.println("Entrada inválida. Por favor, ingresa un número válido para la edad.");
+                sc.next(); // limpia entrada errónea
             }
-        } while (edad <= 0);
+        }
         sc.nextLine();
 
         // --- RAZAS ---
@@ -39,13 +44,24 @@ public class CharacterSheet {
             "Los Tieflings llevan sangre infernal, marcados por su carisma y su misterioso destino."
         };
 
-        System.out.println("\nElige una raza:");
-        for (int i = 0; i < razas.length; i++) System.out.println((i + 1) + ". " + formatearEnum(razas[i]));
-        System.out.print("Número elegido: ");
-        Raza raza = razas[sc.nextInt() - 1];
-        sc.nextLine();
-        System.out.println("\nDescripción de la raza " + formatearEnum(raza) + ":");
-        System.out.println(descRazas[raza.ordinal()]);
+        
+
+         Raza raza = null;
+         while (raza == null) {
+            System.out.println("\nElige una raza:");
+            for (int i = 0; i < razas.length; i++)
+                System.out.println((i + 1) + ". " + formatearEnum(razas[i]));
+            System.out.print("Número elegido: ");
+            int opcion = sc.nextInt();
+            sc.nextLine();
+            if (opcion >= 1 && opcion <= razas.length) {
+                raza = razas[opcion - 1];
+                System.out.println("\nDescripción de la raza " + formatearEnum(raza) + ":");
+                System.out.println(descRazas[raza.ordinal()]);
+            } else {
+                System.out.println("Opción inválida. Debes elegir un número entre 1 y " + razas.length + ".");
+            }
+        }
 
         // --- CLASES ---
         Clase[] clases = Clase.values();
@@ -61,24 +77,42 @@ public class CharacterSheet {
             "Los Magos canalizan el poder arcano mediante el estudio y la disciplina.",
             "Los Monjes perfeccionan cuerpo y mente a través de la meditación y el entrenamiento.",
             "Los Paladines son campeones sagrados guiados por juramentos de justicia.",
-            "Los Pícaros dominan el sigilo, la astucia y los golpes precisos."
+            "Los Pícaros dominan el sigilo, la astucia y los golpes precisos.",
+            "Los Artificieros combinan ciencia y magia para crear inventos arcanos y artefactos únicos."
         };
 
-        System.out.println("\nElige una clase:");
-        for (int i = 0; i < clases.length; i++) System.out.println((i + 1) + ". " + formatearEnum(clases[i]));
-        System.out.print("Número elegido: ");
-        Clase clase = clases[sc.nextInt() - 1];
-        sc.nextLine();
-        System.out.println("\nDescripción de la clase " + formatearEnum(clase) + ":");
-        System.out.println(descClases[clase.ordinal()]);
-
+         Clase clase = null;
+         while (clase == null) {
+            System.out.println("\nElige una clase:");
+            for (int i = 0; i < clases.length; i++)
+                System.out.println((i + 1) + ". " + formatearEnum(clases[i]));
+            System.out.print("Número elegido: ");
+            int opcion = sc.nextInt();
+            sc.nextLine();
+            if (opcion >= 1 && opcion <= clases.length) {
+                clase = clases[opcion - 1];
+                System.out.println("\nDescripción de la clase " + formatearEnum(clase) + ":");
+                System.out.println(descClases[clase.ordinal()]);
+            } else {
+                System.out.println("Opción inválida. Debes elegir un número entre 1 y " + clases.length + ".");
+            }
+        }
         // --- ANTECEDENTES ---
-        Antecedente[] antecedentes = Antecedente.values();
-        System.out.println("\nElige un antecedente:");
-        for (int i = 0; i < antecedentes.length; i++) System.out.println((i + 1) + ". " + formatearEnum(antecedentes[i]));
-        System.out.print("Número elegido: ");
-        Antecedente antecedente = antecedentes[sc.nextInt() - 1];
-        sc.nextLine();
+         Antecedente[] antecedentes = Antecedente.values();
+        Antecedente antecedente = null;
+        while (antecedente == null) {
+            System.out.println("\nElige un antecedente:");
+            for (int i = 0; i < antecedentes.length; i++)
+                System.out.println((i + 1) + ". " + formatearEnum(antecedentes[i]));
+            System.out.print("Número elegido: ");
+            int opcion = sc.nextInt();
+            sc.nextLine();
+            if (opcion >= 1 && opcion <= antecedentes.length) {
+                antecedente = antecedentes[opcion - 1];
+            } else {
+                System.out.println("Opción inválida. Debes elegir un número entre 1 y " + antecedentes.length + ".");
+            }
+        }
 
         // --- Crear personaje ---
         PersonajeBase pj = crearPersonaje(nombre, edad, raza, clase, antecedente);
@@ -107,11 +141,13 @@ public class CharacterSheet {
             inteligencia = leerAtributo(sc, "Inteligencia");
             sabiduria = leerAtributo(sc, "Sabiduría");
             carisma = leerAtributo(sc, "Carisma");
+
+            sc.nextLine(); // 🔧 limpiar buffer
         }
 
         pj.setAtributos(fuerza, destreza, constitucion, inteligencia, sabiduria, carisma);
 
-        // --- Calcular puntos de vida ---
+         // --- Calcular puntos de vida ---
         int dado = getHitDie(clase);
         int modCon = pj.getModificador(constitucion);
         System.out.println("\nTu clase usa un dado de golpe d" + dado + ".");
@@ -120,8 +156,19 @@ public class CharacterSheet {
 
         int baseHP;
         if (decision.equals("si")) {
-            System.out.print("Introduce el resultado de tu tirada de d" + dado + ": ");
-            int tirada = sc.nextInt();
+            int tirada = -1;
+            while (tirada < 1 || tirada > dado) {
+                System.out.print("Introduce el resultado de tu tirada de d" + dado + " (1-" + dado + "): ");
+                if (sc.hasNextInt()) {
+                    tirada = sc.nextInt();
+                    if (tirada < 1 || tirada > dado) {
+                        System.out.println("Valor inválido. Debe estar entre 1 y " + dado + ".");
+                    }
+                } else {
+                    System.out.println("Entrada inválida. Por favor ingresa un número entre 1 y " + dado + ".");
+                    sc.next();
+                }
+            }
             sc.nextLine();
             baseHP = tirada;
             System.out.printf(" Tirada d%d (%d) + Modificador Constitución (%+d)\n", dado, tirada, modCon);
@@ -163,7 +210,7 @@ public class CharacterSheet {
         return switch (clase) {
             case BARBARO -> 12;
             case PALADIN, GUARDABOSQUES, COMBATIENTE -> 10;
-            case CLERIGO, DRUIDA, MONJE, PICARO, BARDO -> 8;
+            case CLERIGO, DRUIDA, MONJE, PICARO, BARDO, ARTIFICIERO -> 8;
             case HECHICERO, MAGO, BRUJO -> 6;
             default -> 8;
         };
@@ -179,14 +226,19 @@ public class CharacterSheet {
     }
 
     private static int leerAtributo(Scanner sc, String nombre) {
-        int valor;
-        do {
+        int valor = -1;
+        while (valor < 3 || valor > 18) {
             System.out.print(nombre + ": ");
-            valor = sc.nextInt();
-            if (valor < 3 || valor > 18) {
-                System.out.println("Valor inválido. Debe estar entre 3 y 18.");
+            if (sc.hasNextInt()) {
+                valor = sc.nextInt();
+                if (valor < 3 || valor > 18) {
+                    System.out.println("Valor inválido. Debe estar entre 3 y 18.");
+                }
+            } else {
+                System.out.println("Entrada inválida. Por favor, ingresa un número entre 3 y 18.");
+                sc.next();
             }
-        } while (valor < 3 || valor > 18);
+        }
         return valor;
     }
 
@@ -202,8 +254,18 @@ public class CharacterSheet {
     private static PersonajeBase crearPersonaje(String nombre, int edad, Raza raza, Clase clase, Antecedente antecedente) {
         return switch (clase) {
             case BARBARO -> new Barbaro(nombre, edad, raza, antecedente);
-            case MAGO -> new Mago(nombre, edad, raza, antecedente);
+            case BARDO -> new Bardo(nombre, edad, raza, antecedente);
+            case BRUJO -> new Brujo(nombre, edad, raza, antecedente);
+            case CLERIGO -> new Clerigo(nombre, edad, raza, antecedente);
+            case COMBATIENTE -> new Combatiente(nombre, edad, raza, antecedente);
             case DRUIDA -> new Druida(nombre, edad, raza, antecedente);
+            case GUARDABOSQUES -> new Guardabosques(nombre, edad, raza, antecedente);
+            case HECHICERO -> new Hechicero(nombre, edad, raza, antecedente);
+            case MAGO -> new Mago(nombre, edad, raza, antecedente);
+            case MONJE -> new Monje(nombre, edad, raza, antecedente);
+            case PALADIN -> new Paladin(nombre, edad, raza, antecedente);
+            case PICARO -> new Picaro(nombre, edad, raza, antecedente);
+            case ARTIFICIERO -> new Artificiero(nombre, edad, raza, antecedente);
             default -> new PersonajeGenerico(nombre, edad, raza, clase, antecedente);
         };
     }
